@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Skills Snapshot Tool</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+        }
+        .container {
+            width: 50%;
+            margin: 0 auto;
+            background-color: #fff;
+            padding: 20px;
+            margin-top: 50px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        input, textarea, button {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 5px;
+            border: 1px solid #ddd;
+        }
+        button {
+            background-color: #28a745;
+            color: white;
+            border: none;
+        }
+        button:hover {
+            background-color: #218838;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>Create Your Skills Snapshot</h1>
+    <form id="snapshotForm">
+        <label for="skills">Enter your current skills:</label>
+        <textarea id="skills" rows="4" placeholder="E.g., Python, Machine Learning, Project Management"></textarea>
+
+        <label for="projects">Recent projects:</label>
+        <textarea id="projects" rows="4" placeholder="Describe your recent work or projects"></textarea>
+
+        <label for="values">Your values/growth mindset:</label>
+        <textarea id="values" rows="4" placeholder="Describe your work values or how you've grown"></textarea>
+
+        <button type="button" onclick="generateSnapshot()">Generate Snapshot</button>
+    </form>
+
+    <h2>Your Skills Snapshot:</h2>
+    <div id="snapshotOutput"></div>
+</div>
+
+<script>
+    function generateSnapshot() {
+    const skills = document.getElementById('skills').value;
+    const projects = document.getElementById('projects').value;
+    const values = document.getElementById('values').value;
+
+    // Create request data
+    const requestData = {
+        skills: skills,
+        projects: projects,
+        values: values
+    };
+
+    // Send data to the Flask backend
+    fetch('http://localhost:5000/process_snapshot', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(requestData),
+    })
+    .then(response => response.json())
+    .then(data => {
+        // Display the processed snapshot
+        const snapshotOutput = document.getElementById('snapshotOutput');
+        snapshotOutput.innerHTML = `
+            <h3>Skills:</h3>
+            <p>${data.skills}</p>
+            <h3>Recent Projects:</h3>
+            <p>${data.projects}</p>
+            <h3>Values:</h3>
+            <p>${data.values}</p>
+        `;
+    })
+    .catch((error) => {
+        console.error('Error:', error);
+    });
+}
+
+</script>
+
+</body>
+</html>
